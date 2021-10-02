@@ -1,0 +1,51 @@
+language: c
+compiler:
+  - gcc
+
+env:
+  - VER_NEWRELIC_C_SDK=1.3.0
+
+addons:
+  apt:
+    packages:
+      - lua5.1
+      - libreadline-dev
+      - libncurses5-dev
+      - libpcre3-dev
+      - libssl-dev
+      - lua5.1-dev
+      - luarocks
+      - libssl-dev
+      - build-essential
+      - lua-bit32
+      - lua-bit32-dev
+      - perl
+      - npm
+      - nodejs
+before_install:
+    - sudo apt-get update
+
+install:
+  - mkdir ./vendor && cd ./vendor
+  - wget http://openresty.org/download/openresty-1.19.9.1.tar.gz && tar -xf openresty-1.19.9.1.tar.gz
+  - cd openresty-1.19.9.1/
+  - ./configure --prefix=/opt/openresty && make && sudo make install && cd ..
+  - export PATH=/opt/openresty/nginx/sbin:$PATH
+  - wget https://github.com/newrelic/c-sdk/archive/refs/tags/v${VER_NEWRELIC_C_SDK}.tar.gz && tar -xf "v${VER_NEWRELIC_C_SDK}.tar.gz"
+  - cd c-sdk-${VER_NEWRELIC_C_SDK}
+  - make
+  - ar -x libnewrelic.a
+  - gcc -shared -lpcre -lm -lpthread -rdynamic *.o -o libnewrelic.so
+  - sudo mkdir -p /usr/local/lib && sudo cp libnewrelic.so /usr/local/lib/
+  - sudo ldconfig
+  - cd ../../
+  - luarocks --local install luacheck
+  - luarocks --local install lua-cjson
+  - luarocks --local install luaposix
+  - luarocks --local install luasocket
+  - luarocks --local install luasec
+  - luarocks --local install https://raw.githubusercontent.com/jdesgats/telescope/master/rockspecs/telescope-scm-1.rockspec
+  - sudo npm install typescript -g
+  - export PERL_MM_USE_DEFAULT=1
+  - sudo cpan Test::Nginx
+script: make test
