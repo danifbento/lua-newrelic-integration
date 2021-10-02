@@ -25,6 +25,15 @@ This library is being tested. By default SDK will send all data using SSL.
 
 This library transposes all methods from C-SDK into Lua. It is based on the original [lua-resty-newrelic](https://github.com/saks/lua-resty-newrelic) from Aliaksandr "saksmlz" Rahalevich <saksmlz__at__gmail.com>.
 
+Description
+===========
+
+This Lua library is a luajit ffi-based wrapper around [newrelic C-SDK](http://github.com/newrelic/c-sdk) for the ngx_lua nginx module.
+
+Please read [newrelic C-SDK Documentation](https://newrelic.github.io/c-sdk/index.html) for more details on each function/method.
+
+This library **can only** be used with luajit, **NOT** lua, because uses [luajit ffi](http://luajit.org/ext_ffi.html).
+
 Synopsis
 ===========
 
@@ -312,15 +321,6 @@ accept_distributed_trace_payload_httpsafe - accept a httpsafe trace payload
 ```lua
 accept_distributed_trace_payload_httpsafe(payload, transport_type)
 ```
-
-Description
-===========
-
-This Lua library is a luajit ffi-based wrapper around [newrelic C-SDK](http://github.com/newrelic/c-sdk) for the ngx_lua nginx module.
-
-Please read [newrelic C-SDK Documentation](https://newrelic.github.io/c-sdk/index.html) for more details on each function/method.
-
-This library **can only** be used with luajit, **NOT** lua, because uses [luajit ffi](http://luajit.org/ext_ffi.html).
 
 Installation
 ============
