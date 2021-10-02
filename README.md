@@ -1,12 +1,13 @@
-Name
+lua-newrelic-integration
 ====
 
-lua-newrelic-integration - Lua Newrelic SDK for the ngx_lua based on the C SDK 1.3.0
+**Lua Newrelic SDK** for the *ngx_lua* based on **New Relic C SDK**.
+
+**New Relic One** is a powerful full-stack data analysis platform for all your software's metrics, events, and logs. Now available with a modern, consumption pricing model. Explore the platform Get free access. Platform Capabilities AIOps Alerts Application Monitoring (APM) Browser Monitoring ...
 
 Table of Contents
 =================
 
-* [Name](#name)
 * [Status](#status)
 * [Description](#description)
 * [Synopsis](#synopsis)
