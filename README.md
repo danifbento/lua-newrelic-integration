@@ -5,7 +5,7 @@ lua-newrelic-integration
 
 **New Relic One** is a powerful full-stack data analysis platform for all your software's metrics, events, and logs. Now available with a modern, consumption pricing model. Explore the platform Get free access. Platform Capabilities AIOps Alerts Application Monitoring (APM) Browser Monitoring ...
 
-[![Build Status](https://app.travis-ci.com/danifbento/lua-newrelic-integration.svg?branch=master)](https://travis-ci.org/danifbento/lua-newrelic-integration)
+[![Build Status](https://app.travis-ci.com/danifbento/lua-newrelic-integration.svg?branch=main)](https://app.travis-ci.com/danifbento/lua-newrelic-integration)
 
 Table of Contents
 =================
