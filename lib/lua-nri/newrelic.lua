@@ -1058,7 +1058,7 @@ local newrelic_add_attribute = function(transaction_id, name, value)
   if type(value) == "string" then
     return nr.newrelic_add_attribute_string(transaction_id, name, value)
   elseif type(value) == "number" and
-        (not (s == nil) or (value > 9223372036854775808 and value < -9223372036854775807)) then
+        (not (s == nil) or (value > 9223372036854775808 or value < -9223372036854775807)) then
     return nr.newrelic_add_attribute_double(transaction_id, name, value)
   elseif type(value) == "number" and value < 2147483647 and value > -2147483648 then
     return nr.newrelic_add_attribute_int(transaction_id, name, value)
@@ -1093,7 +1093,7 @@ local newrelic_custom_event_add_attribute = function(custom_event, name, value)
   if type(value) == "string" then
     return nr.newrelic_custom_event_add_attribute_string(custom_event, name, value)
   elseif type(value) == "number" and
-        (not (s == nil) or (value > 9223372036854775808 and value < -9223372036854775807)) then
+        (not (s == nil) or (value > 9223372036854775808 or value < -9223372036854775807)) then
     return nr.newrelic_custom_event_add_attribute_double(custom_event, name, value)
   elseif type(value) == "number" and value < 2147483647 and value > -2147483648 then
     return nr.newrelic_custom_event_add_attribute_int(custom_event, name, value)
