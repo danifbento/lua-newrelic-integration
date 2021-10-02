@@ -20,7 +20,13 @@ _M.enable = function(configuration)
        _configuration.log.enabled and
        not (_configuration.log.filename == nil) and
        not (_configuration.log.level == nil) then
-      newrelic.configure_log(configuration.log.filename, configuration.log.level)
+       local log_created = newrelic.configure_log(_configuration.log.filename,
+                                                  _configuration.log.level)
+       if not log_created then
+          ngx.log(ngx.ERR, "Impossible to create log at " .. _configuration.log.filename
+                           .. " with the level " .. _configuration.log.level
+                           .. "! Please, check if the folder exists and you have permissions to write")
+       end
     end
 
     newrelic_application = newrelic.create_app(license_key, app_name, configuration)
@@ -32,7 +38,7 @@ end
 
 _M.notice_error = function(priority, message, class)
   if _M.enabled then
-    newrelic.notice_error(ngx.ctx.nr_transaction_id, priority, message, class)
+    return newrelic.notice_error(ngx.ctx.nr_transaction_id, priority, message, class)
   end
 end
 
@@ -46,7 +52,7 @@ end
 _M.end_web_transaction = function()
   local transaction_id = ngx.ctx.nr_transaction_id
   if _M.enabled and transaction_id then
-      newrelic.end_web_transaction(transaction_id)
+      return newrelic.end_web_transaction(transaction_id)
   end
 end
 
@@ -62,7 +68,7 @@ end
 _M.end_segment = function(segment_id)
   local transaction_id = ngx.ctx.nr_transaction_id
   if _M.enabled and transaction_id and segment_id then
-    newrelic.end_segment(transaction_id, segment_id)
+    return newrelic.end_segment(transaction_id, segment_id)
   end
 end
 

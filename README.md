@@ -14,6 +14,7 @@ Table of Contents
 * [API](#api)
 * [Installation](#installation)
 * [Tested with](#tested-with)
+* [TODO](#todo)
 * [Bugs and Patches](#bugs-and-patches)
 * [Author](#author)
 * [Copyright and License](#copyright-and-license)
@@ -369,6 +370,14 @@ Tested with
 
 * openresty 1.19.9.1
 * C-SDK 1.3.0
+
+TODO
+================
+
+- [ ] Add tests to each newrelic_agent/newrelic method
+- [ ] Improve README with case scenarios
+- [ ] Add examples
+- [ ] Add Travis CI
 
 Bugs and Patches
 ================

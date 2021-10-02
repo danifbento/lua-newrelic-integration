@@ -22,7 +22,13 @@ our $HttpConfig = qq{
     lua_package_path "$pwd/lib/?.lua;;";
     init_worker_by_lua_block {
         local newrelic_agent = require("lua-nri.newrelic_agent")
-        configuration = { }
+        configuration = {
+            log = {
+                enabled = true,
+                filename = "t/servroot/logs/error.log",
+                level = newrelic_agent.consts.NEWRELIC_LOG_DEBUG,
+            }
+        }
         newrelic_agent.enable(configuration)
     }
 
@@ -37,7 +43,23 @@ no_long_string();
 run_tests();
 
 __DATA__
-=== TEST 1: Configured agent.
+=== TEST 1: Not configured agent.
+--- main_config eval: $::MainConfigWithoutNrConfig
+--- http_config eval: $::HttpConfig
+--- config
+    location = /a {
+        access_by_lua 'require("lua-nri.newrelic_agent").start_web_transaction()';
+        echo "OK";
+        log_by_lua 'require("lua-nri.newrelic_agent").end_web_transaction()';
+    }
+--- request
+GET /a
+--- response_body
+OK
+--- error_log
+Newrelic Lua Agent is not configured for
+
+=== TEST 2: Configured agent.
 --- main_config eval: $::MainConfig
 --- http_config eval: $::HttpConfig
 --- config
@@ -53,18 +75,3 @@ OK
 --- error_log
 Starting Newrelic Lua Agent for
 
-=== TEST 2: Not configured agent.
---- main_config eval: $::MainConfigWithoutNrConfig
---- http_config eval: $::HttpConfig
---- config
-    location = /a {
-        access_by_lua 'require("lua-nri.newrelic_agent").start_web_transaction()';
-        echo "OK";
-        log_by_lua 'require("lua-nri.newrelic_agent").end_web_transaction()';
-    }
---- request
-GET /a
---- response_body
-OK
---- error_log
-Newrelic Lua Agent is not configured for

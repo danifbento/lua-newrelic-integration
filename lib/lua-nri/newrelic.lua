@@ -1008,10 +1008,14 @@ local newrelic_create_app = function(license_key, app_name, configuration)
     if _configuration.span_events == nil then
        _configuration.span_events = {}
     end
+    if _configuration.log == nil then
+       _configuration.log = {}
+    end
   end
 
   -- input configuration
-  config.log_filename = ""
+  config.log_filename = _configuration.log.filename or ""
+  config.log_level = _configuration.log.level or nil
   config.transaction_tracer.enabled =
           _configuration.transaction_tracer.enabled or true
   config.transaction_tracer.threshold =
