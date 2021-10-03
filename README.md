@@ -374,6 +374,7 @@ enough permission to read the `.lua` file.
 Tested with
 ================
 
+* Linux
 * openresty 1.19.9.1
 * C-SDK 1.3.0
 
