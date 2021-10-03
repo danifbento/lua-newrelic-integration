@@ -340,7 +340,7 @@ $./newrelic_daemon -f --logfile stdout --loglevel debug
 To get the *.so needed to run this library you need to:
 ```bash
 $ ar -x libnewrelic.a
-$ gcc -shared -lnewrelic -lpcre -lm -lpthread -rdynamic *.o -o libnewrelic.so
+$ gcc -shared -lpcre -lm -lpthread -rdynamic *.o -o libnewrelic.so
 ```
 
 And put libnewrelic.so on your LD_PATH
@@ -348,7 +348,11 @@ And put libnewrelic.so on your LD_PATH
 If you are using the OpenResty bundle (http://openresty.org ), then
 just download lua file [newrelic.lua](https://github.com/danifbento/lua-newrelic-integration/blob/master/lib/lua-nri/newrelic.lua)
 and [newrelic_agent.lua](https://github.com/danifbento/lua-newrelic-integration/blob/master/lib/lua-nri/newrelic_agent.lua)
-files to the directiory where nginx will find it. Another way to install is to use
+files to the directiory where nginx will find it. Another way to install is to use `luarocks` running:
+
+```bash
+$ luarocks install lua-newrelic-integration
+```
 
 If you are using your own nginx + ngx_lua build, then you need to configure
 the lua_package_path directive to add the path of your lua-newrelic-integration source
@@ -379,7 +383,7 @@ TODO
 - [ ] Add tests to each newrelic_agent/newrelic method
 - [ ] Improve README with case scenarios
 - [ ] Add examples
-- [ ] Add Travis CI
+- [x] Add Travis CI
 
 Bugs and Patches
 ================
