@@ -970,7 +970,7 @@ ffi.cdef([[
 
 -- local c-sdk lib https://github.com/newrelic/c-sdk/releases/tag/v1.3.0
 -- $ ar -x libnewrelic.a
--- $ gcc -shared -lnewrelic -lpcre -lm -lpthread -rdynamic *.o -o libnewrelic.so
+-- $ gcc -shared -lpcre -lm -lpthread -rdynamic *.o -o libnewrelic.so
 local nr = ffi.load('libnewrelic', true)
 
 -- configure log
@@ -1179,7 +1179,7 @@ local newrelic_start_datastore_segment = function(
   collection,
   operation,
   host,
-  port_or_path_id,
+  port_path_or_id,
   database_name,
   query)
   local params = ffi.new("newrelic_datastore_segment_params_t", {
@@ -1187,7 +1187,7 @@ local newrelic_start_datastore_segment = function(
     collection = collection,
     operation = operation,
     host = host,
-    port_or_path_id = port_or_path_id,
+    port_path_or_id = port_path_or_id,
     database_name = database_name,
     query = query
   })

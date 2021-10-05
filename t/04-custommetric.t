@@ -43,39 +43,7 @@ no_long_string();
 run_tests();
 
 __DATA__
-=== TEST 1: Not configured agent.
---- main_config eval: $::MainConfigWithoutNrConfig
---- http_config eval: $::HttpConfig
---- config
-    location = /a {
-        access_by_lua 'require("lua-nri.newrelic_agent").start_web_transaction()';
-        echo "OK";
-        log_by_lua 'require("lua-nri.newrelic_agent").end_web_transaction()';
-    }
---- request
-GET /a
---- response_body
-OK
---- error_log
-Newrelic Lua Agent is not configured for
-
-=== TEST 2: Configured agent.
---- main_config eval: $::MainConfig
---- http_config eval: $::HttpConfig
---- config
-    location = /a {
-        access_by_lua 'require("lua-nri.newrelic_agent").start_web_transaction()';
-        echo "OK";
-        log_by_lua 'require("lua-nri.newrelic_agent").end_web_transaction()';
-    }
---- request
-GET /a
---- response_body
-OK
---- error_log
-Starting Newrelic Lua Agent for
-
-=== TEST 3: Notice Error.
+=== TEST 1: Create custom event.
 --- main_config eval: $::MainConfig
 --- http_config eval: $::HttpConfig
 --- config
@@ -83,7 +51,7 @@ Starting Newrelic Lua Agent for
         access_by_lua 'require("lua-nri.newrelic_agent").start_web_transaction()';
         content_by_lua_block {
             local newrelic_agent = require("lua-nri.newrelic_agent")
-            newrelic_agent.notice_error(100, "Message", "Class")
+            newrelic_agent.record_custom_metric("CustomMetric", 100)
             ngx.say("OK")
         }
         log_by_lua 'require("lua-nri.newrelic_agent").end_web_transaction()';
@@ -93,4 +61,4 @@ GET /a
 --- response_body
 OK
 --- shutdown_error_log
-DEBUG 'newrelic_notice_error' no errors | priority: 100, errmsg: Message, errclass: Class
+DEBUG 'newrelic_record_custom_metric' no errors | metric_name: CustomMetric, milliseconds: 100.0
