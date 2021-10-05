@@ -89,7 +89,7 @@ end
 
 _M.ignore_transaction = function()
   local transaction_id = ngx.ctx.nr_transaction_id
-  if _M.ensabled and transaction_id then
+  if _M.enabled and transaction_id then
     return newrelic.ignore_transaction(transaction_id)
   end
 end
@@ -135,7 +135,7 @@ _M.record_custom_metric = function(name, milliseconds)
   end
 end
 
-_M.start_datastore_segment = function(product, collection, operation, host, port_or_path_id, database_name, query)
+_M.start_datastore_segment = function(product, collection, operation, host, port_path_or_id, database_name, query)
   local transaction_id = ngx.ctx.nr_transaction_id
   if _M.enabled and transaction_id then
     return newrelic.start_datastore_segment(
@@ -144,7 +144,7 @@ _M.start_datastore_segment = function(product, collection, operation, host, port
       collection,
       operation,
       host,
-      port_or_path_id,
+      port_path_or_id,
       database_name,
       query)
   end
