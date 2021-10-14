@@ -1,8 +1,8 @@
 package = "lua-newrelic-integration"
-version = "0.01-3"
+version = "0.01-4"
 source = {
    url = "git://github.com/danifbento/lua-newrelic-integration",
-   tag = "v0.01-3"
+   tag = "v0.01-4"
 }
 description = {
    summary = "Lua newrelic client library for OpenResty / ngx_lua.",
@@ -21,7 +21,7 @@ dependencies = {
 build = {
    type = "builtin",
    modules = {
-      ["lua-nri.newrelic"] = "lib/nri/newrelic.lua",
-      ["lua-nri.newrelic_agent"] = "lib/nri/newrelic_agent.lua"
+      ["lua-nri.newrelic"] = "lib/lua-nri/newrelic.lua",
+      ["lua-nri.newrelic_agent"] = "lib/lua-nri/newrelic_agent.lua"
    }
 }
