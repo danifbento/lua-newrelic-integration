@@ -97,7 +97,7 @@ end
 -- attributes
 _M.add_attribute = function(name, value)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if _M.enabled then
+  if _M.enabled and transaction_id then
     return newrelic.add_attribute(transaction_id, name, value)
   end
 end
