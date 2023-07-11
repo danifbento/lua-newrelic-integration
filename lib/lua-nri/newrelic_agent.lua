@@ -33,6 +33,9 @@ _M.enable = function(configuration)
     end
 
     newrelic_application = newrelic.create_app(license_key, app_name, configuration)
+
+    ngx.log(ngx.ERR, newrelic_application)
+
     newrelic_application_enabled = (newrelic_application ~= nil and _M.enabled)
   end
   if newrelic_application_enabled then
