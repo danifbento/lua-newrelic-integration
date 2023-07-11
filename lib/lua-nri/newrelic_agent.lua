@@ -35,31 +35,43 @@ _M.enable = function(configuration)
     newrelic_application = newrelic.create_app(license_key, app_name, configuration)
 
     newrelic_application_enabled = (newrelic_application ~= nil and _M.enabled)
+
+    local retry = 0
+    if newrelic_application_enabled == false and retry < 3 then
+      newrelic_application = newrelic.create_app(license_key, app_name, configuration)
+      retry = retry + 1
+      ngx.log(ngx.INFO, "Retrying create_app ... ".. tostring(retry) .. " times")
+      newrelic_application_enabled = (newrelic_application ~= nil and _M.enabled)
+    end
   end
-  if newrelic_application_enabled then
+
+  if newrelic_application_enabled == true then
     ngx.log(ngx.INFO, 'Starting Newrelic Lua Agent for ' .. app_name)
   else
     ngx.log(ngx.ERR, 'Newrelic Lua Agent is not configured for ' .. (app_name or "invalid name"))
+    if retry == 3 then
+      ngx.log(ngx.ERR, 'All retries were used trying to create_app...')
+    end
   end
 end
 
 _M.notice_error = function(priority, message, class)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id then
+  if newrelic_application_enabled and transaction_id then
     return newrelic.notice_error(transaction_id, priority, message, class)
   end
 end
 
 -- web transactions
 _M.start_web_transaction = function()
-  if newrelic_application_enabled and _M.enabled then
+  if newrelic_application_enabled then
       ngx.ctx.nr_transaction_id = newrelic.start_web_transaction(newrelic_application, ngx.var.uri)
   end
 end
 
 _M.end_web_transaction = function()
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id then
+  if newrelic_application_enabled and transaction_id then
       return newrelic.end_web_transaction(transaction_id)
   end
 end
@@ -68,14 +80,14 @@ end
 -- generic segment
 _M.start_segment = function(name, category)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id then
+  if newrelic_application_enabled and transaction_id then
       return newrelic.start_segment(transaction_id, name, category)
   end
 end
 
 _M.end_segment = function(segment_id)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id and segment_id then
+  if newrelic_application_enabled and transaction_id and segment_id then
     return newrelic.end_segment(transaction_id, segment_id)
   end
 end
@@ -83,21 +95,21 @@ end
 
 -- non web transactions
 _M.start_non_web_transaction = function(name)
-  if newrelic_application_enabled and _M.enabled then
+  if newrelic_application_enabled then
     ngx.ctx.nr_transaction_id_non_web = newrelic.start_non_web_transaction(newrelic_application, name)
   end
 end
 
 _M.end_non_web_transaction = function()
   local transaction_id = ngx.ctx.nr_transaction_id_non_web
-  if newrelic_application_enabled and _M.enabled then
+  if newrelic_application_enabled and transaction_id then
     return newrelic.end_non_web_transaction(transaction_id)
   end
 end
 
 _M.ignore_transaction = function()
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id then
+  if newrelic_application_enabled and transaction_id then
     return newrelic.ignore_transaction(transaction_id)
   end
 end
@@ -105,47 +117,47 @@ end
 -- attributes
 _M.add_attribute = function(name, value)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id then
+  if newrelic_application_enabled and transaction_id then
     return newrelic.add_attribute(transaction_id, name, value)
   end
 end
 
 -- custom events
 _M.custom_event = function(type)
-  if newrelic_application_enabled and _M.enabled then
+  if newrelic_application_enabled then
     return newrelic.create_custom_event(type)
   end
 end
 
 _M.record_custom_event = function(event)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id then
+  if newrelic_application_enabled and transaction_id then
     return newrelic.record_custom_event(transaction_id, event)
   end
 end
 
 _M.discard_custom_event = function(event)
-  if newrelic_application_enabled and _M.enabled and event then
+  if newrelic_application_enabled and event then
     return newrelic.discard_custom_event(event)
   end
 end
 
 _M.custom_event_add_attribute = function(custom_event, name, value)
-  if newrelic_application_enabled and _M.enabled then
+  if newrelic_application_enabled then
     return newrelic.custom_event_add_attribute(custom_event, name, value)
   end
 end
 
 _M.record_custom_metric = function(name, milliseconds)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id then
+  if newrelic_application_enabled and transaction_id then
     return newrelic.record_custom_metric(transaction_id, name, milliseconds)
   end
 end
 
 _M.start_datastore_segment = function(product, collection, operation, host, port_path_or_id, database_name, query)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id then
+  if newrelic_application_enabled and transaction_id then
     return newrelic.start_datastore_segment(
       transaction_id,
       product,
@@ -160,67 +172,67 @@ end
 
 _M.start_external_segment = function(uri, procedure, library)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id then
+  if newrelic_application_enabled and transaction_id then
     return newrelic.start_external_segment(transaction_id, uri, procedure, library)
   end
 end
 
 _M.set_transaction_name = function(name)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id then
+  if newrelic_application_enabled and transaction_id then
     return newrelic.set_transaction_name(transaction_id, name)
   end
 end
 
 _M.set_transaction_timing = function(duration, start_time)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id then
+  if newrelic_application_enabled and transaction_id then
     return newrelic.set_transaction_timing(transaction_id, duration, start_time)
   end
 end
 
 _M.set_segment_timing = function(segment, duration, start_time)
-  if newrelic_application_enabled and _M.enabled and segment then
+  if newrelic_application_enabled and segment then
     return newrelic.set_segment_timing(segment, duration, start_time)
   end
 end
 
 _M.set_segment_parent_root = function(segment)
-  if newrelic_application_enabled and _M.enabled and segment then
+  if newrelic_application_enabled and segment then
     return newrelic.set_segment_parent_root(segment)
   end
 end
 
 _M.set_segment_parent = function(segment, parent_segment)
-  if newrelic_application_enabled and _M.enabled and segment and parent_segment then
+  if newrelic_application_enabled and segment and parent_segment then
     return newrelic.set_segment_parent(segment, parent_segment)
   end
 end
 
 _M.create_distributed_trace_payload = function(segment)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id and segment then
+  if newrelic_application_enabled and transaction_id and segment then
     return newrelic.create_distributed_trace_payload(transaction_id, segment)
   end
 end
 
 _M.create_distributed_trace_payload_httpsafe = function(segment)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id and segment then
+  if newrelic_application_enabled and transaction_id and segment then
     return newrelic.create_distributed_trace_payload_httpsafe(transaction_id, segment)
   end
 end
 
 _M.accept_distributed_trace_payload = function(payload, transport_type)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id then
+  if newrelic_application_enabled and transaction_id then
     return newrelic.accept_distributed_trace_payload(transaction_id, payload, transport_type)
   end
 end
 
 _M.accept_distributed_trace_payload_httpsafe = function(payload, transport_type)
   local transaction_id = ngx.ctx.nr_transaction_id
-  if newrelic_application_enabled and _M.enabled and transaction_id then
+  if newrelic_application_enabled and transaction_id then
     return newrelic.accept_distributed_trace_payload_httpsafe(transaction_id, payload, transport_type)
   end
 end
