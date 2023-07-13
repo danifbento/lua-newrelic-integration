@@ -1122,7 +1122,12 @@ end
 
 -- web transactions
 local newrelic_start_web_transaction = function(application, name)
-  return nr.newrelic_start_web_transaction(application, name)
+  local p = ffi.new('newrelic_txn_t*[1]')
+  p[0] = nr.newrelic_start_web_transaction(application, name)
+  if p[0] == nil then
+    return nil
+  end
+  return p[0]
 end
 
 local newrelic_end_web_transaction = function(transaction_id, nonWeb)

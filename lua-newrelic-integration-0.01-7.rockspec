@@ -1,8 +1,8 @@
 package = "lua-newrelic-integration"
-version = "0.01-6"
+version = "0.01-7"
 source = {
    url = "git://github.com/danifbento/lua-newrelic-integration",
-   tag = "v0.01-6"
+   tag = "v0.01-7"
 }
 description = {
    summary = "Lua newrelic client library for OpenResty / ngx_lua.",
